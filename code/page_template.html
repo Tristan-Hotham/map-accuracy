@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>How accurate were old maps? | Eight maps across 1,700 years, measured one way</title>
+<meta name="description" content="Ptolemy, the Peutinger Table, al-Idrisi, the Carta Pisana, the Hereford Mappa Mundi, the Gough Map, Saxton and Ino, fitted to the real world with one method: errors, distortion grids and what they mean.">
+<meta property="og:title" content="How accurate were old maps?">
+<meta property="og:description" content="Eight maps measured one way: from {{q.ino.rel|f1}}% of the mapped area's size (Ino) to {{q.peutinger.rel|f1}}% (the Peutinger Table). Accuracy follows purpose more than date.">
+<meta property="og:image" content="https://maps.tristanhotham.com/map-accuracy/header.png">
+<meta property="og:url" content="https://maps.tristanhotham.com/map-accuracy/">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,800;9..144,900&family=IBM+Plex+Mono:wght@400;500&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap">
+<style>
+{{CSS}}
+</style></head>
+<body>
+<div class="topbar">
+  <a class="tb-name" href="#mapWrap">How accurate were old maps?</a>
+  <span class="tb-k">Data study · 2026</span>
+  <nav class="tb-links"><a href="#essay">About</a><button class="theme" id="theme" aria-label="Toggle dark mode">◐</button><a href="https://doi.org/10.5281/zenodo.24104514">Paper</a><a class="x" href="{{REPO}}">Data and code</a></nav>
+</div>
+<div class="mapband">
+  <div class="pane" id="mapWrap" data-fullscreen-map role="application" aria-label="Distortion grid explorer: each old map's grid bent to show how it draws the real world">
+    <canvas id="cv"></canvas>
+    <div class="nojs" id="nojs">Loading the maps. This needs JavaScript.</div>
+    <div class="cartouche" id="cartouche">
+      <button class="ct-toggle" id="ctToggle" aria-expanded="true">How accurate were old maps? ▾</button>
+      <button class="ct-fold" id="ctFold" title="Fold the title" aria-label="Fold the title">▴</button>
+      <div class="ct-body">
+        <div class="kicker"><b>Data study</b><span>2026</span></div>
+        <h1>How accurate were <span class="a">old maps?</span></h1>
+        <p class="dek">Eight maps from about AD 150 to 1821, each fitted to the real world with one scale, one shift and one turn. The coloured grid is a regular grid on the ground as the old map draws it. Pick a map below, drag the slider to bend the world into its shape, tap a place.</p>
+        <div class="byline">{{BYLINE}}</div>
+      </div>
+    </div>
+    <div class="ov-top">
+      <div class="srch"><input type="search" id="q" placeholder="Find a place on these maps" aria-label="Find a place on these maps" autocomplete="off"><ul class="sug" id="sug" role="listbox"></ul></div>
+      <div class="chips"><button class="chip" data-v="grid" aria-pressed="true">Grid</button><button class="chip" data-v="arrows" aria-pressed="false">Error arrows</button><button class="chip" data-v="area" aria-pressed="false">Stretch</button><button class="chip lyr" id="lyrBtn" aria-expanded="false" aria-controls="lp">Layers</button></div>
+    </div>
+    <div class="lp" id="lp" role="dialog" aria-label="Layers">
+      <h4>Layers</h4>
+      <label><input type="checkbox" id="lyLand" checked> Land (real coast, Natural Earth)</label>
+      <label><input type="checkbox" id="lyReal" checked> Regular grid on the real ground</label>
+      <label><input type="checkbox" id="lyGrid" checked> The grid as the map draws it</label>
+      <label><input type="checkbox" id="lyArea"> Stretch of each grid cell</label>
+      <label><input type="checkbox" id="lyPts" checked> Places measured</label>
+      <label><input type="checkbox" id="lyArr"> Error arrows</label>
+      <label><input type="checkbox" id="lyHull" checked> Outline of the area measured</label>
+      <label><input type="checkbox" id="lyLab" checked> Labels: home and largest errors</label>
+    </div>
+    <div class="mkeys" id="mkeys" aria-live="polite"></div>
+    <div class="thumbs" id="thumbs" role="toolbar" aria-label="Choose a map"></div>
+    <div class="tl" id="tl"><button id="play" aria-label="Play the bend">Play</button><label for="t" class="sr" style="position:absolute;left:-9999px">Bend from the real ground to the old map</label><input type="range" id="t" min="0" max="100" value="100" step="1"><b id="tLab">as drawn</b></div>
+    <div class="tip" id="tip"></div>
+  </div>
+</div>
+<div class="wrap" id="essay">
+<p style="margin-top:6px">How accurate were old maps? It sounds like a simple question, and every study of a single map answers it with a number: so many kilometres out, on average. But those numbers cannot be compared. Each study picks its own places, its own way of fitting the old map to the new, and its own yardstick, and a map of Britain will always be out by fewer kilometres than a map of the known world. So I took eight maps I have measured before, from Ptolemy's <i>Geography</i> of about AD 150 to Ino Tadataka's survey of Japan finished in 1821, and measured them all again the same way: the same fit, the same projection, the same error measure, with the uncertainty attached.</p>
+<div class="byline">{{BYLINE}} · Data: control points from eight earlier studies (Zenodo, CC BY 4.0); Natural Earth (public domain)</div>
+<div class="stats">
+<div class="stat"><b>{{q.ino.rel|f1}}%</b><span>Ino's survey of Japan (as compiled in 1878): median error as a share of the size of the area mapped</span></div>
+<div class="stat"><b>{{q.pisana.rel|f1}}%</b><span>the Carta Pisana, a sea chart of about 1275</span></div>
+<div class="stat"><b>{{q.hereford.rel|f1}}%</b><span>the Hereford Mappa Mundi, a generation later</span></div>
+<div class="stat"><b>{{q.peutinger.rel|f1}}%</b><span>the Peutinger Table, a Roman road map squeezed into a strip</span></div>
+</div>
+
+<h2><span class="n">01 · One yardstick</span>Kilometres are not enough</h2>
+<p>Fit each map to the real world with the best single scale, shift and turn, and the typical place is out by {{q.saxton.km|f1}} km on Saxton's map of England and Wales (1579), {{q.gough.km|f0}} km on the Gough Map of Britain, {{q.pisana.km|f0}} km on the Carta Pisana and {{q.hereford.km|f0}} km on the Hereford map. Much of that difference is size: a map of the known world is spread over thousands of kilometres. So the yardstick here is the error as a share of the size of the area mapped (the typical distance of its places from their centre). On that measure the eight maps run from {{q.ino.rel|f1}}% to {{q.peutinger.rel|f1}}%.</p>
+<div class="chart" id="chart"><div class="ctl" role="group" aria-label="Measure"><button data-m="rel" aria-pressed="true">Share of the area's size</button><button data-m="loc" aria-pressed="false">Against its neighbours</button><button data-m="km" aria-pressed="false">Kilometres</button></div><svg id="chartSvg" viewBox="0 0 700 380" role="img" aria-label="Chart of map accuracy against date"></svg><div class="leg"><span><i style="background:#B4442E"></i>world map</span><span><i style="background:#C98A2B"></i>route map</span><span><i style="background:#2F6A9E"></i>sea chart</span><span><i style="background:#3E7D5A"></i>survey</span><span><i style="border:2px solid #9C9384;width:7px;height:7px"></i>second portolan, sheet sets</span></div></div>
+<p class="src">Median error with its 95% interval. Lower is better. Log scale. Tap a dot to open that map above.</p>
+<div class="tscroll"><table class="t" id="tbl"><thead><tr><th>Map</th><th>Date</th><th class="r">Places</th><th class="r">Median km</th><th class="r">Share of size</th><th class="r">Against neighbours</th></tr></thead><tbody></tbody></table></div>
+
+<h2><span class="n">02 · Date or purpose?</span>Not a story of progress</h2>
+<p>It is tempting to read the chart as progress: big errors in antiquity, small ones by the age of survey. The data say something narrower. Across all eight maps, later maps are more accurate on average (a rank correlation of {{H1.rel.rho|f2}}), but that rests on the two surveys, Saxton's and Ino's, which are both the latest and the best. Among the six maps made before 1500 there is no clear trend (a correlation of {{H1_checks.pre1500.rho|f2}}), and with the real world drawn on a different projection the overall trend is no longer clear either. The trend with date holds in {{H1_n_sig|int}} of the {{H1_n_checks|int}} checks planned in advance, so it is not robust: accuracy, measured this way, is not progress. A Pisan or Genoese sea chart of about 1275 has {{ratio_hereford_pisana|f1}} times less error, as a share of size, than the Hereford map made a generation later, and Ptolemy's coordinates from the second century beat two world maps made a thousand years after him.</p>
+<p>What lines the maps up better is what they were for. The surveys, measured on the ground, sit at {{purpose.survey.median_rel|f1}}% (median of the two); the sea chart at {{purpose.sea chart.median_rel|f1}}%; the route maps at {{purpose.route map.median_rel|f1}}%; the world maps at {{purpose.world map.median_rel|f1}}%. The Hereford map is a picture of history and the world centred on Jerusalem, and the Peutinger Table is a road map rolled into a strip about 20 times longer than it is high. That they fit the modern ground badly is not a failure of the people who made them.</p>
+<div class="figure"><img src="img/compare.jpg" alt="Two charts of map accuracy against date, from Ptolemy around AD 150 to Ino in 1821: the two surveys at the bottom right are the most accurate; before 1500 the maps scatter with no clear trend" loading="lazy"><p class="src">Left: error as a share of the area's size. Right: each place against its eight nearest neighbours.</p></div>
+
+<h2><span class="n">03 · Shapes</span>Eight ways to bend the world</h2>
+<p>The grids above show where each map goes wrong. The Peutinger Table's grid collapses into a ribbon. Ptolemy's is regular around the Mediterranean and folded at the edges. Al-Idrisi's world is squashed north to south. The Hereford map's grid folds over itself, with the Holy Land swollen and the edges of the world pulled round the circular frame. The Carta Pisana is regular in the Mediterranean and bent in the Atlantic, and the Gough Map is good in England and pulled out of shape in Scotland. Saxton's and Ino's grids are nearly square.</p>
+<div class="figure"><img src="img/grids.jpg" alt="Nine small maps, each with a regular grey grid on the real ground and a coloured grid bent into the shape the old map draws: a thin ribbon for the Peutinger Table, a folded circle for Hereford, nearly square grids for Saxton and Ino" loading="lazy"><p class="src">Each grid is drawn from the errors of the places measured, so it is only reliable near them.</p></div>
+<p>The errors come in regional blocks, not at random: on {{H3.maps_sig|int}} of the eight maps, a place's error is much like its neighbours'. On balance maps also get worse away from home, by about {{home.pooled.pct_per_R|f0}}% for each step of the map's own size from its centre of knowledge, but not everywhere. On the Hereford map it is the other way round: places near Jerusalem are out by a median {{home.hereford.near_km|f0}} km and places far away by {{home.hereford.far_km|f0}} km, because the Holy Land is drawn several times too big.</p>
+<div class="figure"><img src="img/home.jpg" alt="Nine scatter charts of each place's error against its distance from the map's home city: rising on the Peutinger Table, al-Idrisi and the Gough Map, falling on the Hereford map" loading="lazy"><p class="src">Error against distance from each map's centre of knowledge.</p></div>
+
+<h2><span class="n">04 · Checks</span>The order holds; the trend does not</h2>
+<p>I wrote down the method and the checks before running anything. Changing the projection of the real world, fitting robustly, leaving out the doubtful places, testing each place without itself, taking 40 places per map, or leaving out each region in turn hardly changes the order of the eight maps. It does change the levels, especially for the world maps and sea charts, whose errors fall by up to {{proj_max_drop_pc|f0}}% on a projection with straight lines of latitude and longitude. When I shuffled each map's places at random, to see what a map with no information looks like, the errors were {{shuffle_range.0|f0}}% to {{shuffle_range.1|f0}}% of the area's size, at least {{shuffle_min_ratio|f1}} times the real ones. Every one of these maps knows a great deal about where things are.</p>
+<div class="figure"><img src="img/checks.jpg" alt="Dot chart of each map's error under the main method and every check: the dots for each map cluster together, far below the shuffled maps on the right" loading="lazy"><p class="src">Every planned check, and the shuffled maps.</p></div>
+<div class="figure"><img src="img/turns.jpg" alt="Eight compass dials showing where true north points on each map: down on al-Idrisi, left on Hereford and the Gough Map, slightly left of up on the Peutinger Table and the Carta Pisana, straight up on Ptolemy, Saxton and Ino" loading="lazy"><p class="src">Which way is up: the turn of each map from the best fit.</p></div>
+
+<h2><span class="n">05 · How I did this</span>Same places, one method</h2>
+<p><b>The places.</b> Every place is one I identified and read for an earlier study of each map: {{n_points_whole|int}} on the eight maps, {{n_points_all|int}} with the second portolan chart (the Catalan Atlas, 1375) and the sheet sets of Saxton's county maps and Ino's large-scale survey. Nothing was re-read for this comparison. Ino's whole-country frame is the general map of Japan compiled from his survey in 1878, because his own sheets survive in this collection only for the far north.</p>
+<p><b>The method.</b> Each map is fitted to the real positions with a single scale, shift and turn (a Helmert transformation), on an azimuthal equidistant projection centred on its places, and each error is the distance on the globe from where the map puts a place to where it really is. The share of size divides the median error by the root mean square distance of the places from their centre. The neighbourhood measure fits each place's eight nearest neighbours and asks how well they predict it. Intervals come from 2,000 resamples. The grids are drawn the way MapAnalyst draws them, from a smooth surface through the errors.</p>
+<p><b>What this cannot say.</b> These numbers measure how far a set of identifiable places, on a particular copy or reconstruction, sits from the modern ground. They do not measure whether a map did its job, and they include the errors of copies (al-Idrisi is measured on Konrad Miller's 1928 reconstruction, Hereford and Peutinger on his facsimiles), of the places I could identify, and of the projection chosen. Eight maps are too few to separate date from purpose.</p>
+<details><summary>Sources and licences</summary>
+<ul class="plain">
+<li>Control points from my earlier studies, each with data and code on Zenodo (CC BY 4.0): <a href="https://doi.org/10.5281/zenodo.23882603">Ptolemy</a>, <a href="https://doi.org/10.5281/zenodo.23882605">Peutinger Table</a>, <a href="https://doi.org/10.5281/zenodo.23882607">al-Idrisi</a>, <a href="https://doi.org/10.5281/zenodo.23878612">Hereford Mappa Mundi</a>, <a href="https://doi.org/10.5281/zenodo.24044645">portolan charts</a>, <a href="https://doi.org/10.5281/zenodo.24043678">Gough Map</a>, <a href="https://doi.org/10.5281/zenodo.24052723">Saxton's atlas</a>, <a href="https://doi.org/10.5281/zenodo.23882609">Ino's Japan</a>.</li>
+<li>Ptolemy's coordinates: Grasshoff and Defaux, Catalog of Ptolemy's Geography (Zenodo, CC BY 4.0). Peutinger stations: OmnesViae (René Voorburg), after Talbert's <i>Rome's World</i>.</li>
+<li>Coastlines: Natural Earth 1:50m (public domain).</li>
+<li>Method after MapAnalyst (Jenny and Hurni 2011) and Hardy's multiquadric (1971).</li>
+<li>Text, figures and data CC BY 4.0; code MIT.</li>
+</ul></details>
+<div class="cta"><a class="p" href="https://doi.org/10.5281/zenodo.24104514">Read the paper</a><a href="{{REPO}}">Data and code</a><a href="https://blog.tristanhotham.com/2026/10/31/map-accuracy/">Blog post</a></div>
+<footer>
+<p>Dr Tristan Hotham, Independent researcher. ORCID <a href="https://orcid.org/0000-0003-4931-9349">0000-0003-4931-9349</a>.</p>
+<p>Cite as: Hotham, T. (2026) How accurate were old maps? Eight maps across 1,700 years, measured one way. Zenodo. <a href="https://doi.org/10.5281/zenodo.24104514">10.5281/zenodo.24104514</a></p>
+<p>Code: <a href="{{REPO}}">github.com/Tristan-Hotham/map-accuracy</a> (MIT). Text, figures and data CC BY 4.0.</p>
+<p>{{AI}}</p>
+</footer>
+</div>
+<script src="js/page.js?v={{VERSION}}"></script>
+{{FULLSCREEN}}
+<script src="https://maps.tristanhotham.com/assets/site-nav.js" defer></script>
+</body>
+</html>
