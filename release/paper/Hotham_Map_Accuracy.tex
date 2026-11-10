@@ -1,0 +1,349 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage{fontspec}
+\setmainfont{Source Serif 4}[Path=/home/claude/ref/fonts/, UprightFont=SourceSerif4-Regular.ttf, BoldFont=SourceSerif4-Semibold.ttf, ItalicFont=SourceSerif4-It.ttf]
+\setmonofont{IBM Plex Mono}[Path=/home/claude/ref/fonts/, UprightFont=IBMPlexMono-Regular.ttf, BoldFont=IBMPlexMono-Medium.ttf, Scale=0.88]
+\usepackage[a4paper,margin=2.4cm]{geometry}
+\usepackage{amsmath}
+\usepackage{graphicx,booktabs,float,caption,array,xcolor,longtable}
+\usepackage{xurl}
+\usepackage[hidelinks]{hyperref}
+\usepackage[round]{natbib}
+\usepackage{setspace}
+\setstretch{1.08}
+\renewcommand{\topfraction}{0.9}
+\renewcommand{\bottomfraction}{0.8}
+\renewcommand{\textfraction}{0.1}
+\renewcommand{\floatpagefraction}{0.75}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.55em}
+\captionsetup{font=small,labelfont=bf}
+\setlength{\bibsep}{3pt}
+\urlstyle{same}
+\hypersetup{pdftitle={How Accurate Were Old Maps?},pdfauthor={Dr Tristan Hotham}}
+
+\begin{document}
+\begin{center}
+{\Large\bfseries How Accurate Were Old Maps? Eight Maps Across 1,700 Years, Measured One Way\par}
+\vspace{1.2em}
+{\large Dr Tristan Hotham\par}
+\vspace{0.3em}
+{\small Independent researcher\\
+ORCID: 0000-0003-4931-9349\\
+DOI: https://doi.org/10.5281/zenodo.24104514\par}
+\vspace{0.8em}
+2026
+\end{center}
+
+\begin{quote}
+\small
+\begin{center}\textbf{Abstract}\end{center}
+Cartometric studies of single historical maps are common, but their results are rarely comparable, because each uses its own transformation, projection and error measure. I re-fit the control points of eight maps made between about AD 150 and 1821 with one documented method: Ptolemy's \textit{Geography}, the Peutinger Table, al-Idrisi's world map, the Carta Pisana, the Hereford Mappa Mundi, the Gough Map, Saxton's general map of England and Wales, and Ino Tadataka's survey of Japan (through its 1878 compilation). Using 3,772 identified places, each map is fitted to the ground by a similarity (Helmert) transformation in an azimuthal equidistant plane, and error is expressed both in kilometres and relative to the size of the mapped area, with bootstrap confidence intervals. Relative error ranges from 1.7\% (Ino) and 3.5\% (Saxton) through 8.0\% (Carta Pisana) to 23.4\% (Hereford) and 26.0\% (Peutinger). Rank correlation between date and relative error is negative ($\rho = $-$0.71$, exact one-sided $p = 0.029$), but the association rests on the two surveys made last: among the six maps before 1500 it is weak ($\rho = $-$0.31$), and it is not significant when the ground is projected differently. Residuals are spatially autocorrelated on seven of the eight maps, and error grows away from each map's centre of knowledge on balance, but not on every map. Purpose, source and scale explain more of the ranking than date: these numbers measure fitness to the modern ground, not the progress of cartography.
+
+\textbf{Keywords:} history of cartography; cartometric analysis; map accuracy; distortion grids; Helmert transformation; MapAnalyst; Ptolemy; portolan charts; mappae mundi
+\end{quote}
+
+\section{Introduction}
+How accurate were old maps? The question is old, popular and easy to answer badly. It is easy to answer badly because historical maps were made for different purposes, at different scales and for different readers, and because the numbers produced by cartometric studies of single maps are seldom comparable with one another. A median error of 18 km on a map of Britain and a median error of 500 km on a map of the known world do not say that the first map was made with thirty times the skill. They do not even say that the first map is more accurate in any sense that would survive a change of area, method or reference projection.
+
+This paper does something narrower and, I hope, more useful. It takes eight maps that I have measured in earlier preprints \citep{hotham2026ptolemy,hotham2026peutinger,hotham2026idrisi,hotham2026portolan,hotham2026hereford,hotham2026gough,hotham2026saxton,hotham2026ino}, together spanning about 1,700 years from Ptolemy's \textit{Geography} (about AD 150) to Ino Tadataka's survey of Japan (completed 1821), and re-fits every one of them with a single, documented method. The control points (real places identified on each map and located on the ground) are those of the earlier studies; nothing is re-read. What is new is the method being the same for every map, the expression of error relative to the size of the area mapped, a measure of shape at the scale of a neighbourhood, distortion grids drawn the same way, and a set of checks written down before the re-fit was run.
+
+The eight maps are deliberately unlike one another. Three are maps of the known world: Ptolemy's coordinate catalogue \citep{berggren2000,stuckelberger2006}, al-Idrisi's map made in Palermo in 1154 \citep{ahmad1992}, and the Hereford Mappa Mundi of about 1300 \citep{harvey1996,westrem2001}. Two are route maps: the Peutinger Table, a medieval copy of a late Roman road map \citep{talbert2010}, and the Gough Map of Britain \citep{lilley2009,delanosmith2017}. One is a sea chart, the Carta Pisana, the oldest surviving portolan chart \citep{campbell1987}. Two are surveys: Christopher Saxton's general map of England and Wales of 1579 \citep{evans1979} and Ino Tadataka's survey of the coasts of Japan \citep{unno1994}. The same method applied to all of them will not say which was the best map. It can say how far each departs from the modern ground after the fairest simple alignment, where the departures lie, whether they are regional or random, and how much of the apparent ranking depends on choices that the analyst makes.
+
+The paper asks five questions, set out as hypotheses in a written plan before any re-fit was run (Section~\ref{sec:design}). Does accuracy, measured this way, rise with date? Does it follow the purpose of the map? Are the errors regional rather than random? Do errors grow away from the map's centre of knowledge? And does the format of a map, such as the Peutinger Table's long strip, appear as a stretch? The answers are, in order: only weakly and not robustly; largely, yes; yes, on seven of eight maps; on balance, but not on every map; and yes, strongly.
+
+Section~\ref{sec:lit} sets the paper in the literatures on the history of cartography and on cartometric analysis. Section~\ref{sec:data} describes the control points, Section~\ref{sec:design} the method and the plan, Section~\ref{sec:results} the results and Section~\ref{sec:robust} the checks. Section~\ref{sec:disc} discusses what the comparison can and cannot show, and Section~\ref{sec:conc} concludes.
+
+\section{Background and literature}\label{sec:lit}
+\subsection{Judging old maps}
+The modern history of cartography has spent much of its effort warning against the question this paper asks. The first volume of \textit{The History of Cartography} \citep{harley1987} treats each kind of map in its own context, with separate chapters on Ptolemy \citep{dilke1987a}, Roman itineraries \citep{dilke1987b}, medieval world maps \citep{woodward1987} and portolan charts \citep{campbell1987}. \citet{woodward1985} argued that medieval mappae mundi have been misjudged for failing to show geography on a coordinate system, when their main purpose was to present history and moral teaching in a geographical setting. \citet{edney2019} goes further, arguing that the very idea of a single, progressing ``cartography'' is a construction of the period after 1800, and that maps are better studied as particular modes of mapping in their own circumstances of production and use.
+
+None of this makes measurement pointless. It makes it important to say what is measured. A planimetric error is a statement about the relation between a map and the modern ground, given a chosen transformation and projection. It says nothing directly about whether the map served its users, and it is affected by the copy measured, the places chosen and the identifications made. The comparison here is offered in that spirit: as a set of comparable descriptions, not as a league table of skill.
+
+\subsection{Cartometric analysis}
+Quantitative comparison of old maps with modern ones has a long history. \citet{tobler1966} estimated empirical projections for the Hereford map and found that a portolan chart closely matches an oblique Mercator projection, and \citet{tobler1994} developed bidimensional regression, the fitting of one set of planar coordinates to another by Euclidean (similarity) and affine transformations with measures of fit. Strain analysis \citep{boutoura1986} and the comparative methods surveyed by \citet{boutoura2006}, \citet{livieratos2006} and \citet{balletti2006} established the now standard sequence: identify control points, fit a global transformation, examine residuals, and interpolate local distortion.
+
+Distortion grids, regular grids on the modern map carried onto the old map through an interpolated displacement field, were developed in the Swiss school \citep{forstner1998}, and the multiquadric interpolation of \citet{hardy1971} was adapted to old maps by \citet{beineke2001}. MapAnalyst made the method widely available \citep{jenny2007,jenny2011}: control points are fitted by Helmert (four-parameter similarity) or affine transformations, and distortion grids, displacement vectors and isolines of scale and rotation are derived from a multiquadric interpolation of the residuals. Differential distortion analysis \citep{claeys2016} is an alternative that derives scale factors and angular distortion directly. Regression-based studies of single maps, such as the analysis of regional variation in the Gough Map by \citet{lloyd2009}, show that accuracy can vary within a map at several scales.
+
+What this literature has rarely done is compare many maps with one method. Each study chooses its own reference projection, transformation and summary; many report root mean square errors in map units or kilometres, which depend on the size of the area. \citet{livieratos2006graticule} drew attention to the effect of the graticule and projection when Ptolemy's coordinates are compared with reality, and \citet{nicolai2016} argued from a geodetic analysis that portolan charts are composites of partial charts, each with its own scale and orientation, that closely match a Mercator or equidistant cylindrical projection, so that conclusions about them depend on the projection assumed. A common method, a relative error measure and explicit checks of these choices are the contribution here.
+
+\subsection{The eight maps}
+\textbf{Ptolemy's \textit{Geography}} (about AD 150) survives as a catalogue of some 6,300 places with longitudes and latitudes and instructions for drawing a world map \citep{berggren2000,stuckelberger2006,dilke1987a}. Its coordinates are measured here, not any manuscript drawing; the Omega recension is used. \textbf{The Peutinger Table} is a parchment roll about 6.7 m long and 33 cm high, a copy made about 1200 of a Roman original that \citet{talbert2010} places around AD 300; it is measured on Konrad Miller's 1887 facsimile, and its extreme east to west stretch is part of its design \citep{dilke1987b,talbert2010}. \textbf{Al-Idrisi's world map} was made for Roger II of Sicily and completed in 1154, with south at the top \citep{ahmad1992}; it is measured on Miller's 1928 reconstruction from the manuscripts, which joins the sectional maps of the \textit{Nuzhat al-mushtaq} into one map. \textbf{The Carta Pisana} (about 1275) is the oldest surviving portolan chart \citep{campbell1987}; the origin and accuracy of these charts are debated \citep{campbell1987,nicolai2016}. \textbf{The Hereford Mappa Mundi} (about 1300) is the largest surviving medieval world map, a circular, east-up image of history and the world centred on Jerusalem \citep{harvey1996,westrem2001,woodward1987}; it is measured on Miller's 1896 facsimile. \textbf{The Gough Map} of Britain, conventionally dated to about 1360 \citep{parsons1958}, with an argument from its handwriting for about 1400 \citep{smallwood2010}; on its making and remaking see \citet{solopova2012} and \citet{delanosmith2017}. It has been measured before at several scales \citep{lilley2009,lloyd2009}. \textbf{Saxton's atlas} of England and Wales was engraved between 1574 and 1579; its general map of 1579 is the main frame here, with the county sheets as a sheet set \citep{evans1979}. \textbf{Ino Tadataka's} large-scale map of Japan, completed in 1821, is known from manuscript copies; on Japanese cartography of the period see \citet{unno1994}. Only 40 of its 214 large-scale sheets are photographed in the collection used, all in the far north, so the whole-country frame here is the 1878 general map of Japan compiled from Ino's survey; the large-scale sheets enter as a sheet set.
+
+\subsection{Contribution}
+The paper offers four things. First, a comparable table of eight maps measured one way, with uncertainty, including a relative measure that removes the dependence of kilometre errors on the size of the area. Second, a neighbourhood measure that separates the shape of a map at the scale of adjacent places from its overall arrangement. Third, distortion grids drawn the same way for every map. Fourth, an explicit test of whether this kind of accuracy rises with date, and of how much the answer depends on choices of projection, transformation and control points.
+
+\section{Data}\label{sec:data}
+The inputs are the control points of the eight source studies (Table~\ref{tab:inputs}). Each is a real place identified on the old map, with its position on the map in the map's own frame (pixels on a photograph, scan, facsimile or reconstruction; degrees for Ptolemy) and its position on the ground (WGS84). The identifications and readings are those of the source studies and are described there. In brief: Ptolemy's places are the editors' identifications in the catalogue of \citet{grasshoff2019}, matched to gazetteers; the Peutinger Table's are stations of the OmnesViae reconstruction read on Miller's facsimile; al-Idrisi's are towns read on Miller's reconstruction and checked against three gazetteers; Hereford's are inscriptions with identifications from \citet{bevan1873}, read on Miller's facsimile; the Carta Pisana's are harbours, headlands, river mouths and islands read on the scan; the Gough Map's are way stations read on a photograph; Saxton's are towns read on the Biblioth\`eque nationale de France copy; and Ino's 1878 points are capes and islands. Each source flags its confidence, with different codes; the top code of each is used in check R2.
+
+\begin{table}[tbp]\centering\scriptsize\caption{Inputs. Control points from the author's earlier studies (Zenodo record numbers 10.5281/zenodo.N). Frames: the number of separately fitted images (sheets).}\label{tab:inputs}\setlength{\tabcolsep}{3pt}\begin{tabular}{p{2.9cm}p{1.9cm}p{1.2cm}p{2.5cm}p{2.3cm}rrr}\toprule Map & Date & Purpose & Measured on & Points & $n$ & Frames & Zenodo\\\midrule
+Ptolemy's Geography & c. 150 & world map & Omega coordinates (degrees) & identified places & 2,358 & 1 & \footnotesize{23882603}\\
+Peutinger Table & c. 300 (copy c. 1200) & route map & Miller 1887 facsimile & road stations & 465 & 1 & \footnotesize{23882605}\\
+al-Idrisi's world map & 1154 & world map & Miller 1928 reconstruction & towns & 431 & 1 & \footnotesize{23882607}\\
+Carta Pisana & c. 1275 & sea chart & scan & harbours, capes, mouths & 148 & 1 & \footnotesize{24044645}\\
+Hereford Mappa Mundi & c. 1300 & world map & Miller 1896 facsimile & inscriptions & 143 & 1 & \footnotesize{23878612}\\
+Gough Map & c. 1360 & route map & photograph & way stations & 163 & 1 & \footnotesize{24043678}\\
+Saxton's general map & 1579 & survey & BnF copy, scan & towns & 46 & 1 & \footnotesize{24052723}\\
+Ino's Japan (1878 compilation) & 1821 (compiled 1878) & survey & 1878 compilation & capes, islands & 18 & 1 & \footnotesize{23882609}\\
+\midrule
+Catalan Atlas chart & 1375 & sea chart & scan, sheets 5 to 8 & harbours, capes, mouths & 201 & 1 & \footnotesize{24044645}\\
+Saxton's county sheets & 1574 to 1579 & survey & BnF copy, 34 sheets & towns & 811 & 34 & \footnotesize{24052723}\\
+Ino's large-scale sheets & 1821 & survey & LoC copy, sheets & coast points & 80 & 10 & \footnotesize{23882609}\\
+\bottomrule\end{tabular}\end{table}
+
+Three features of the inputs matter for comparison. First, several maps are measured on reproductions: Miller's facsimiles of the Peutinger Table and the Hereford map and his reconstruction of al-Idrisi's map. Reconstruction and facsimile errors are part of the measured error, and for al-Idrisi the reconstruction itself is an assembly by Miller. Second, the Ino row measures the 1878 compilation, not Ino's own sheets, and has only 18 points. Third, the number and spread of control points differ by two orders of magnitude, from 18 (Ino 1878) to 2,358 (Ptolemy). The method below is designed so that the main measure does not depend mechanically on the number of points, and check R5 tests this directly.
+
+Two sheet sets are analysed alongside the eight whole maps: Saxton's 34 county sheets (811 town readings) and Ino's large-scale sheets with at least four control points (10 sheets, 80 points). The chart of the Catalan Atlas (1375), the second chart of the portolan study, is reported as a supplementary row, with its sheets 7 and 8 shifted by the join offset measured in that study. In all, 4,864 control points in 53 frames are used.
+
+\section{Research design}\label{sec:design}
+\subsection{One method}
+Every frame (a whole map, or one sheet of a sheet set) is treated the same way. The true positions are projected into an azimuthal equidistant plane centred on the spherical centroid of the frame's control points, in kilometres. Map positions are put into a right-handed plane: for images, $(x, -y)$ in pixels; for Ptolemy, (longitude $\times \cos 36^\circ$, latitude), his own ratio for the parallel of Rhodes. Two transformations are fitted from the map plane to the ground plane by least squares: a Helmert (similarity) transformation with a shift, one scale and one rotation (four parameters; the main model) and an affine transformation (six parameters). The fitted position of each control point is taken back to longitude and latitude, and its error is the great-circle distance to its true position.
+
+For each frame I record the number of points, the scale, the rotation (the angle by which the map is turned anticlockwise against true north), the median, 90th percentile and root mean square error, the affine anisotropy (ratio of the singular values of the linear part) and $R$, the root mean square distance of the control points from their centroid, a measure of the size of the mapped area. The main comparable measure is the \textbf{relative error}, $100 \times$ median error $/ R$.
+
+The \textbf{neighbourhood error} measures shape at a small scale. For each point, a Helmert transformation is fitted to its eight nearest neighbours on the ground (in the same frame, the point itself left out) and used to predict the point's position; the error is divided by the mean distance to those neighbours. Its median is a dimensionless measure of how well a map places a place among its neighbours, regardless of how well the map holds together as a whole.
+
+Distance from home is measured from a pre-set point for each map: Alexandria for Ptolemy, Rome for the Peutinger Table, Palermo for al-Idrisi, Genoa for the Carta Pisana, Palma for the Catalan Atlas, Jerusalem for Hereford, London for Gough and Saxton, and Tokyo for Ino.
+
+Distortion grids are drawn for display only. The residual vectors of the Helmert fit are interpolated with Hardy's multiquadric (with a linear term, a shape parameter set to the inverse of the median nearest-neighbour spacing and light smoothing), a regular grid of spacing $R/4$ inside the buffered convex hull of the points is moved by the interpolated field, and the result is the grid as the old map draws it, after the best similarity alignment. No statistic depends on the grids.
+
+Uncertainty is from 2,000 bootstrap resamples \citep{efron1993}: control points are resampled within a frame, with the transformation refitted each time; for sheet sets, whole sheets are resampled. Intervals are percentile intervals.
+
+\subsection{Hypotheses}
+The plan, written in the study notes before any re-fit was run, set out five hypotheses and what would count against each.
+
+\textbf{H1 (date):} relative error falls with date across the eight maps. Test: Spearman correlation between date and relative error, with an exact one-sided permutation test over all $8! = 40{,}320$ orderings. The Peutinger Table is dated by its lost original (about 300); its copy date (about 1200) is a check. I expected the strong form to fail.
+
+\textbf{H2 (purpose):} relative error is lowest for surveys, then sea charts, then route maps and world maps, with Hereford worst. With eight maps this is descriptive only.
+
+\textbf{H3 (regional distortion):} residuals are spatially autocorrelated on every map (Moran's I \citep{moran1950} of the east and north components of the residual vectors, eight-nearest-neighbour weights, 999 permutations), and neighbourhood error is well below whole-map error.
+
+\textbf{H4 (centre and edge):} error grows with distance from the map's home. Test: per-map Spearman correlations with bootstrap intervals, and a pooled regression of $\log(\text{error}/R)$ on distance from home$/R$ with map fixed effects, with standard errors clustered by map. Because there are only nine clusters, inference uses the wild cluster bootstrap \citep{cameron2008} with Webb's six-point weights \citep{webb2023} and 9,999 draws, with the null imposed.
+
+\textbf{H5 (format):} the affine fit improves most on the Peutinger Table, whose strip format should appear as strong anisotropy.
+
+\subsection{Pre-specified checks}
+R1 replaces the azimuthal equidistant ground with an equirectangular projection (true scale at the centroid latitude) and with Mercator. R2 keeps only each source's highest-confidence points (frames with at least ten). R3 uses a robust Helmert fit with Huber weights \citep{huber1964}. R4 uses leave-one-out errors. R5 draws 40 points per map 500 times. R6 leaves out each region of each map in turn (the source studies' regions, or quadrants where a map has none). R7 uses six and twelve neighbours for the neighbourhood error. R8 uses an aspect ratio of 1 for Ptolemy's plane. F1 shuffles the map positions among the control points of each frame (200 draws), giving the error of a map with no information. F2 compares the common-method errors with each source study's own published figure. A result is called robust only if it holds in every check.
+
+\section{Results}\label{sec:results}
+\subsection{Eight maps on one scale}
+Table~\ref{tab:main} and Figure~\ref{fig:compare} give the main results. In kilometres the errors range over more than two orders of magnitude, from a median of 4.4 km on Saxton's general map and 8.3 km on the 1878 map of Japan to 349 km on the Peutinger Table and 526 km on the Hereford map. Much of this range is size. Figure~\ref{fig:size} plots median error against $R$: the maps of the known world are spread over thousands of kilometres and the surveys over hundreds, and kilometre errors grow with the area mapped.
+
+Relative error removes most of that dependence. Ino's survey, as compiled in 1878, places the median point within 1.7\% of the size of the area mapped (95\% CI 1.0 to 2.2), Saxton's general map within 3.5\% (2.6 to 4.2), the Carta Pisana within 8.0\% (6.8 to 9.6) and the Gough Map within 10.0\% (8.0 to 12.7). Ptolemy's coordinates follow at 12.9\% (12.2 to 13.7), then al-Idrisi at 15.7\% (14.7 to 17.2), the Hereford map at 23.4\% (20.1 to 29.3) and the Peutinger Table at 26.0\% (24.8 to 28.2). The worst map's relative error is 16 times the best's. The Catalan Atlas chart (8.6\%) sits beside the Carta Pisana, and the sheet sets are close to the whole maps of their makers: Saxton's county sheets 4.9\% and Ino's large-scale sheets 3.4\%, at a median of 1.39 km and 0.45 km.
+
+\begin{table}[tbp]\centering\scriptsize\caption{The common method. $R$: root mean square distance of the points from their centroid (km; median over sheets for sheet sets). Error: median great-circle error after the Helmert fit (km), 90th percentile, and median relative to $R$ (\%). Neighbourhood: median error of a Helmert fit on each point's eight nearest neighbours, relative to their mean distance (\%). 95\% bootstrap intervals in brackets. Turn: degrees the map is turned anticlockwise from north. Aniso.: affine anisotropy.}\label{tab:main}\setlength{\tabcolsep}{3pt}\begin{tabular}{lrrlrllrr}\toprule Map & $n$ & $R$ & Median km [CI] & P90 & Relative \% [CI] & Neighbourhood \% [CI] & Turn & Aniso.\\\midrule
+Ptolemy & 2,358 & 1,693 & 218.6 [197.9, 238.8] & 397 & 12.9 [12.2, 13.7] & 41.7 [40.4, 42.9] & 0 & 1.15\\
+Peutinger & 465 & 1,338 & 348.6 [310.9, 408.3] & 870 & 26.0 [24.8, 28.2] & 37.2 [34.3, 40.6] & 17 & 8.08\\
+al-Idrisi & 431 & 2,094 & 328.3 [301.0, 368.3] & 815 & 15.7 [14.7, 17.2] & 36.6 [34.2, 39.2] & $-$179 & 1.36\\
+Carta Pisana & 148 & 1,171 & 93.8 [77.7, 112.5] & 201 & 8.0 [6.8, 9.6] & 17.8 [16.3, 19.3] & 9 & 1.08\\
+Hereford & 143 & 2,247 & 526.1 [435.0, 675.1] & 1,292 & 23.4 [20.1, 29.3] & 47.6 [44.0, 52.1] & 88 & 1.92\\
+Gough & 163 & 176 & 17.5 [13.0, 24.6] & 34 & 10.0 [8.0, 12.7] & 22.0 [19.7, 24.8] & 95 & 1.12\\
+Saxton & 46 & 127 & 4.4 [3.3, 5.0] & 9 & 3.5 [2.6, 4.2] & 10.2 [8.9, 12.2] & $-$1 & 1.03\\
+Ino & 18 & 500 & 8.3 [4.6, 10.5] & 14 & 1.7 [1.0, 2.2] & 2.6 [1.8, 3.2] & $-$2 & 1.03\\
+\midrule
+Catalan Atlas & 201 & 1,357 & 117.1 [95.8, 138.1] & 258 & 8.6 [7.3, 10.0] & 15.4 [12.8, 17.1] & 12 & 1.08\\
+Saxton sheets & 811 & 26 & 1.4 [1.2, 1.6] & 3 & 4.9 [4.5, 5.4] & 7.0 [6.5, 7.5] & 8 & 1.05\\
+Ino sheets & 80 & 14 & 0.5 [0.2, 0.5] & 1 & 3.4 [2.0, 5.1] & 4.5 [2.4, 6.0] & 0 & 1.10\\
+\bottomrule\end{tabular}\end{table}
+
+\begin{figure}[tbp]\centering
+\includegraphics[width=\textwidth]{f_compare.pdf}
+\caption{Accuracy against date. A: median Helmert error as a percentage of $R$, the size of the mapped area. B: median neighbourhood error, as a percentage of the mean distance to a place's eight nearest neighbours. Bars are 95\% bootstrap intervals; hollow markers are the Catalan Atlas chart and the two sheet sets. Log scales.}\label{fig:compare}
+\end{figure}
+
+\begin{figure}[tbp]\centering
+\includegraphics[width=0.86\textwidth]{f_size.pdf}
+\caption{Median error in kilometres against the size of the mapped area ($R$). Grey lines mark constant relative error.}\label{fig:size}
+\end{figure}
+
+\subsection{Shape at the scale of a neighbourhood}
+The neighbourhood error gives the same three best maps in the same order: Ino (2.6\%), Saxton (10.2\%) and the Carta Pisana (17.8\%), followed by the Gough Map (22.0\%). It separates the world maps more sharply. On this measure al-Idrisi (36.6\%) and the Peutinger Table (37.2\%) are close, and Ptolemy (41.7\%) and Hereford (47.6\%) are worst: Ptolemy's catalogue holds together well as a whole but places individual places poorly among their neighbours. That is what one would expect of coordinates derived in part from itineraries and rounded to fractions of a degree, densely listed in regions such as Italy and Greece where neighbours are close.
+
+Measured in kilometres, the neighbourhood error is smaller than the whole-map error on 7 of the eight maps, the exception being the sparse 1878 map of Japan. Measured relative to the spacing of places, however, it is larger than the whole-map error relative to the size of the map on every map, contrary to the second part of H3 as written. The two denominators differ, so the comparison is less informative than I assumed when writing the plan; the plain reading is that every map is better at the arrangement of its regions, relative to its size, than at the arrangement of neighbouring places, relative to their spacing.
+
+\begin{figure}[tbp]\centering
+\includegraphics[width=\textwidth]{f_grids.pdf}
+\caption{Distortion grids. A regular grid on the ground (grey, spacing $R/4$) and the same grid as each map draws it after the best similarity alignment (colour), from a multiquadric interpolation of the residuals, inside the buffered convex hull of the control points. North up; each panel at its own scale. Land: Natural Earth.}\label{fig:grids}
+\end{figure}
+
+\subsection{What the grids show}
+The grids (Figure~\ref{fig:grids}) make the differences visible. The Peutinger Table's grid collapses into a narrow band: once a single scale is imposed, the north to south dimension of the Roman world almost disappears, the expected result of a map 20 times longer than it is high. Ptolemy's grid is broadly regular in the Mediterranean and stretched and folded at the edges, east of Mesopotamia and in Africa. Al-Idrisi's is compressed north to south and twisted around the Mediterranean. The Hereford grid folds over itself, with the Holy Land and the Mediterranean enlarged and the edges of the known world pulled round the circular frame. The Carta Pisana's grid is regular in the Mediterranean and bent in the Atlantic, as \citet{campbell1987} and the source study describe. The Gough Map is regular in England and pulled out of shape in Scotland. Saxton's and Ino's grids are close to the regular grid.
+
+\subsection{Date and purpose (H1, H2)}
+Across the eight maps, the rank correlation between date and relative error is $\rho = $-$0.71$, with an exact one-sided permutation $p$ of 0.029; for neighbourhood error it is the same ($\rho = $-$0.71$, $p = 0.029$), and with the Peutinger copy date of about 1200 it is $\rho = $-$0.67$ ($p = 0.042$). Taken alone, these numbers support H1. But the association is carried by the two surveys, which are both the latest maps and the best. Among the six maps made before 1500, the correlation is $\rho = $-$0.31$ ($p = 0.28$, exploratory): the Carta Pisana of about 1275 has 2.9 times less relative error than the Hereford map made a generation later, and Ptolemy's coordinates of about AD 150 are better than al-Idrisi's map of 1154 and the Hereford map. Under the alternative ground projections of check R1 the full-sample correlation weakens to $\rho = $-$0.52$ ($p = 0.10$), and it is significant at the 5\% level in 5 of 8 checks. H1 therefore holds in the weak sense that the two early modern surveys are better than every earlier map, and fails in the sense that matters for a history of progress: before the surveys there is no clear trend.
+
+Purpose does better (H2). The surveys have a median relative error of 2.6\%, the sea chart 8.0\%, the route maps 18.0\% and the world maps 15.7\%. The ordering of surveys, sea chart and the rest matches the plan; Hereford is second worst, not worst, behind the Peutinger Table, whose strip format dominates its whole-map error. Within the route maps, the Gough Map (10.0\%) is far better than the Peutinger Table, and within the world maps Ptolemy is better than both medieval world maps. With one or three maps per group these are descriptions, not tests.
+
+\subsection{Regional distortion (H3)}
+Residuals are strongly spatially autocorrelated on seven of the eight maps, with Moran's I between 0.09 and 0.84 on the significant maps (permutation $p < 0.05$). The exception is the 1878 map of Japan with 18 points. On Saxton's general map the autocorrelation is weak (0.09) but significant, and on 19 of 33 county sheets it is significant at the 5\% level. Errors on old maps come in regional blocks, which is why distortion grids are informative and why a single global transformation understates how well some regions are drawn.
+
+\subsection{Centre and edge (H4)}
+Error grows with distance from home on the Peutinger Table, al-Idrisi's map, the Gough Map, Ptolemy's coordinates and the Catalan Atlas chart (bootstrap intervals of the rank correlation above zero), and falls with distance from Jerusalem on the Hereford map (Figure~\ref{fig:home}, Appendix Table~\ref{tab:home}). On the Carta Pisana, Saxton's general map and the 1878 map of Japan the interval includes zero. The Hereford result is the clearest exception: places near Jerusalem are a median 906 km out, places far from it 403 km, because the Holy Land is drawn at several times the map's average scale, so a single similarity fit misplaces it most. In the pooled regression, error rises by 35\% for each $R$ of distance from home ($b = 0.297$, cluster-robust SE 0.041, wild cluster bootstrap $p = 0.048$, 3,973 points, 9 maps). This is a positive result on balance, at the edge of conventional significance once the small number of clusters is taken into account, and not a uniform law.
+
+\begin{figure}[tbp]\centering
+\includegraphics[width=\textwidth]{f_home.pdf}
+\caption{Error against distance from each map's pre-set home. Dots are control points; lines are medians of six equal-count distance bands. Rank correlations in each panel.}\label{fig:home}
+\end{figure}
+
+\subsection{Format and orientation (H5)}
+The affine anisotropy is 8.1 on the Peutinger Table, against 1.92 on Hereford, 1.36 on al-Idrisi and between 1.03 and 1.15 on the others. H5 holds: the strip format appears as a stretch of about eight to one. The affine fit nonetheless improves the Peutinger Table's median error by only 9\%, because the stretch is not uniform along the strip. The fitted rotations recover each map's orientation (Figure~\ref{fig:turns}): al-Idrisi's south-up map at $-$179 degrees, Hereford (88) and Gough (95) with east at the top, the Carta Pisana turned 9 degrees anticlockwise, as is well known for portolan charts \citep{campbell1987,nicolai2016}, and Ptolemy, Saxton and Ino within about two degrees of north.
+
+\begin{figure}[tbp]\centering
+\includegraphics[width=\textwidth]{f_turns.pdf}
+\caption{Orientation: the direction of true north on each map, from the rotation of the Helmert fit.}\label{fig:turns}
+\end{figure}
+
+\section{Robustness}\label{sec:robust}
+Table~\ref{tab:checks} and Figure~\ref{fig:checks} report every planned check. The order of the eight maps by relative error is almost unchanged: the rank correlation between the main measure and each check is at least 0.95. The levels move with the projection of the ground. For maps spread over thousands of kilometres an equirectangular or Mercator ground fits better than an azimuthal equidistant one; the largest change is for the Catalan Atlas chart, whose relative error falls by 38\% under an equirectangular ground, and Ptolemy's falls from 12.9\% to 8.7\%, consistent with his coordinates being a graticule \citep{livieratos2006graticule} and portolan charts being close to a cylindrical projection \citep{tobler1966,nicolai2016}. Because these changes move the sea charts and Ptolemy relative to the rest, they are the reason H1 loses significance under R1.
+
+Robust fitting (R3), leave-one-out errors (R4) and highest-confidence points (R2, where available) change relative errors by small amounts. Subsamples of 40 points (R5) give medians close to the full-sample values, with wider intervals, so the number of control points does not drive the ranking. Leaving out one region at a time (R6) moves each map's relative error within a band (Appendix Table~\ref{tab:loro}); the widest is the Carta Pisana's, from 6.0\% to 12.1\%, because its Atlantic coasts are much worse than its Mediterranean. Six or twelve neighbours (R7) change the neighbourhood errors but not their order. Ptolemy's aspect ratio (R8) makes little difference (13.3\%).
+
+The falsification check is decisive. With map positions shuffled among the control points, relative errors are between 65\% and 103\%, at least 2.8 times each map's real error. Every map, including the Peutinger Table and Hereford, carries strong geographical information.
+
+The consistency check (F2, Appendix Table~\ref{tab:src}) shows that the common method reproduces the source studies' own figures closely where the method is similar (Gough, Saxton, the Carta Pisana, Hereford, Ino) and differs where the source used a different projection or model (Ptolemy's degree grid; al-Idrisi's affine fit; the Catalan Atlas on Mercator). That is the point of the exercise: each source number was right for its own method, and the methods were not the same.
+
+\begin{table}[tbp]\centering\scriptsize\caption{Pre-specified checks: median relative error (\%) of each map under each check (R7: neighbourhood error). n/a: fewer than ten top-confidence points per frame (R2) or fewer than 40 points (R5). Bottom rows: the H1 rank correlation between date and the column's measure across the eight maps, with its exact one-sided permutation $p$.}\label{tab:checks}\setlength{\tabcolsep}{2.6pt}\begin{tabular}{lrrrrrrrrrr}\toprule Map & Main & R1 eqc & R1 Merc. & R2 top & R3 Huber & R4 LOO & R5 $n=40$ & R7 $k=6$ & R7 $k=12$ & F1 shuffled\\\midrule
+Ptolemy & 12.9 & 8.7 & 8.9 & 12.6 & 8.9 & 12.9 & 12.5 & 46.3 & 36.8 & 65.3\\
+Peutinger & 26.0 & 25.1 & 24.3 & 26.8 & 23.5 & 26.2 & 27.9 & 40.3 & 36.7 & 72.5\\
+al-Idrisi & 15.7 & 14.6 & 14.9 & 15.4 & 14.5 & 15.7 & 16.2 & 39.3 & 30.9 & 86.6\\
+Carta Pisana & 8.0 & 6.7 & 7.0 & n/a & 7.2 & 8.1 & 8.2 & 21.4 & 15.1 & 77.1\\
+Hereford & 23.4 & 26.2 & 27.1 & 23.5 & 21.9 & 23.7 & 24.7 & 51.6 & 44.6 & 80.7\\
+Gough & 10.0 & 10.6 & 10.9 & 7.3 & 8.3 & 10.1 & 9.7 & 23.8 & 18.4 & 85.6\\
+Saxton & 3.5 & 3.8 & 4.1 & n/a & 3.4 & 3.6 & 3.4 & 13.4 & 7.7 & 102.8\\
+Ino & 1.7 & 3.3 & 3.5 & 1.7 & 1.7 & 1.8 & n/a & 3.3 & 2.1 & 87.4\\
+\midrule
+Catalan Atlas & 8.6 & 5.4 & 5.7 & 4.9 & 7.9 & 8.8 & 8.5 & 17.5 & 12.2 & 85.1\\
+Saxton sheets & 4.9 & 5.0 & 5.0 & 4.9 & 4.9 & 5.4 & n/a & 8.3 & 6.0 & 89.5\\
+Ino sheets & 3.4 & 3.3 & 3.4 & n/a & 2.6 & 4.3 & n/a & 5.1 & 4.0 & 74.1\\
+\midrule H1 $\rho$ (date) & $-$0.71 & $-$0.52 & $-$0.52 & & $-$0.71 & $-$0.71 & & $-$0.71 & $-$0.71 & \\
+H1 one-sided $p$ & 0.029 & 0.098 & 0.098 & & 0.029 & 0.029 & & 0.029 & 0.029 & \\
+\bottomrule\end{tabular}\end{table}
+
+\begin{figure}[tbp]\centering
+\includegraphics[width=\textwidth]{f_checks.pdf}
+\caption{Relative error under the main method and each planned check, with the shuffled-position falsification test. Bars: 95\% bootstrap interval of the main estimate.}\label{fig:checks}
+\end{figure}
+
+\section{Discussion}\label{sec:disc}
+\subsection{Accuracy is not progress}
+The most tempting reading of Figure~\ref{fig:compare} is a story of progress: errors were large in antiquity and the Middle Ages and small by the sixteenth century. The data support a narrower statement. The two maps made by systematic survey, Saxton's and Ino's, are more accurate in relative terms than every earlier map, by a factor of two or more. Before them there is no clear trend. A Pisan or Genoese sea chart of about 1275 is as accurate, in relative terms, as the Gough Map of Britain, and better than Ptolemy, al-Idrisi or the Hereford map. Ptolemy's second-century coordinates are better than two world maps made a thousand years later.
+
+What orders the maps is better described by what they were for and how they were made. The surveys were built from measurement on the ground. How the sea charts were built is debated \citep{campbell1987}, and \citet{nicolai2016} argues from geodetic analysis that they are composites of partial charts close to a Mercator or equidistant cylindrical projection; either way they rest on navigation, not on drawing the world as a whole. Ptolemy compiled coordinates for thousands of places that he could not have observed himself. The route maps were made to give the order of stations and the distances between them, not their geometry; the Peutinger Table is a striking case of a map whose shape was sacrificed to its format \citep{talbert2010}. The Hereford map is a world history in pictures \citep{woodward1985,harvey1996}; that its planimetric error is large is not a failure of its makers. These differences are confounded with date, so the comparison cannot separate them; with eight maps it cannot test them either. But the pattern is the one that the history of cartography would predict \citep{harley1987,edney2019}, and it is not the one a simple progress story predicts.
+
+\subsection{What the numbers measure}
+Each number in Table~\ref{tab:main} is the departure of a set of identified places, on a particular copy or reproduction of a map, from the modern ground, after a chosen alignment in a chosen projection. Each of these choices matters. The places are not a random sample: they are the places that could be read and identified, which favours well-known places and clear inscriptions. The copies differ: Miller's reconstruction of al-Idrisi, his facsimiles of the Peutinger Table and Hereford, a scan of the Carta Pisana, a photograph of the Gough Map, a scan of Saxton and an 1878 compilation of Ino's survey. The projection of the ground is not neutral for world maps (Section~\ref{sec:robust}). And the Helmert fit, which preserves shape, judges maps that were never intended to be at one scale, such as the Peutinger Table and the Hereford map, by a standard they did not aim at.
+
+\subsection{Limitations}
+First, eight maps are few. The tests of H1 and H2 are low-powered, and the purpose groups contain one to three maps each, so purpose and date cannot be separated. Second, the control points were identified with different methods and confidence in the source studies, and misidentifications inflate errors; checks R2 and R3 limit but cannot remove this. Third, the Ino row is a later compilation with few points, and the Ino sheets are a small, northern sample. Fourth, the relative error depends on how $R$ is defined; any measure of size would make a map that covers a larger area look relatively better for the same kilometre error, and the root mean square radius is one reasonable choice among several. Fifth, the neighbourhood error depends on the density of points, and the planned comparison of neighbourhood and whole-map relative errors turned out to compare unlike quantities. Sixth, distortion grids are interpolations: they are reliable only near control points, and folds in sparse regions should not be over-read. Seventh, the analysis is planimetric and says nothing about the accuracy of names, distances written on maps, or the content that mattered most to the maps' users.
+
+\subsection{Implications}
+For cartometric work, the results suggest three habits: report errors relative to the size of the area as well as in kilometres; report results under more than one ground projection for maps of large areas; and report a falsification baseline. For the history of cartography, they offer a set of measured, comparable descriptions that can be extended to other maps with the released code, and a reminder, now with numbers, that the accuracy of a map follows how it was made and what it was for more closely than when it was made.
+
+\section{Conclusion}\label{sec:conc}
+Measured one way, eight maps made over about 1,700 years range from about 1.7\% to 26.0\% relative error. The two early modern surveys are the most accurate; a thirteenth-century sea chart comes next; route maps and world maps follow; the Peutinger Table and the Hereford Mappa Mundi, made for quite different purposes, are least accurate by this measure. Errors are regional, they grow away from home on most but not all maps, and the order of the maps survives every planned check, while the apparent trend with date depends on the two surveys and on the projection chosen. Old maps were as accurate as their makers needed and their methods allowed; this comparison shows how that varied, not that it progressed.
+
+\section*{Data availability statement}
+Data and code: Zenodo DOI https://doi.org/10.5281/zenodo.24104514. The interactive version is at \url{https://maps.tristanhotham.com/map-accuracy/} and the repository at \url{https://github.com/Tristan-Hotham/map-accuracy}. The control points come from the author's eight earlier studies, each with its own Zenodo record (Table~\ref{tab:inputs}); Ptolemy's coordinates are from the catalogue of \citet{grasshoff2019} (CC BY 4.0); coastlines are Natural Earth (public domain).
+
+\section*{AI statement}
+I wrote the text, with drafting and editing assistance from Claude (Anthropic), which also helped prepare the analysis code. I reviewed and checked all text and results.
+
+\begin{thebibliography}{99}
+\bibitem[Ahmad(1992)]{ahmad1992} Ahmad, S. M. (1992) Cartography of al-Shar\={\i}f al-Idr\={\i}s\={\i}. In Harley, J. B. and Woodward, D. (eds) \textit{The History of Cartography, Volume Two, Book One: Cartography in the Traditional Islamic and South Asian Societies}. Chicago: University of Chicago Press, 156 to 174.
+\bibitem[Balletti(2006)]{balletti2006} Balletti, C. (2006) Georeference in the analysis of the geometric content of early maps. \textit{e-Perimetron} 1(1), 32 to 42.
+\bibitem[Beineke(2001)]{beineke2001} Beineke, D. (2001) \textit{Verfahren zur Genauigkeitsanalyse f\"ur Altkarten}. Studiengang Geod\"asie und Geoinformation, Universit\"at der Bundeswehr M\"unchen.
+\bibitem[Berggren and Jones(2000)]{berggren2000} Berggren, J. L. and Jones, A. (2000) \textit{Ptolemy's Geography: An Annotated Translation of the Theoretical Chapters}. Princeton: Princeton University Press.
+\bibitem[Bevan and Phillott(1873)]{bevan1873} Bevan, W. L. and Phillott, H. W. (1873) \textit{Mediaeval Geography: An Essay in Illustration of the Hereford Mappa Mundi}. London: E. Stanford.
+\bibitem[Boutoura and Livieratos(1986)]{boutoura1986} Boutoura, C. and Livieratos, E. (1986) Strain analysis for geometric comparisons of maps. \textit{The Cartographic Journal} 23(1), 27 to 34.
+\bibitem[Boutoura and Livieratos(2006)]{boutoura2006} Boutoura, C. and Livieratos, E. (2006) Some fundamentals for the study of the geometry of early maps by comparative methods. \textit{e-Perimetron} 1(1), 60 to 70.
+\bibitem[Cameron et al.(2008)]{cameron2008} Cameron, A. C., Gelbach, J. B. and Miller, D. L. (2008) Bootstrap-based improvements for inference with clustered errors. \textit{Review of Economics and Statistics} 90(3), 414 to 427. doi:10.1162/rest.90.3.414.
+\bibitem[Campbell(1987)]{campbell1987} Campbell, T. (1987) Portolan charts from the late thirteenth century to 1500. In Harley, J. B. and Woodward, D. (eds) \textit{The History of Cartography, Volume One}. Chicago: University of Chicago Press, 371 to 463.
+\bibitem[Claeys Bouuaert et al.(2016)]{claeys2016} Claeys Bouuaert, M., De Baets, B., Vervust, S., Neutens, T., De Maeyer, P. and Van de Weghe, N. (2016) Computation and visualisation of the accuracy of old maps using differential distortion analysis. \textit{International Journal of Geographical Information Science} 30(7), 1255 to 1280. doi:10.1080/13658816.2015.1127377.
+\bibitem[Delano-Smith et al.(2017)]{delanosmith2017} Delano-Smith, C. et al. (2017) New light on the medieval Gough Map of Britain. \textit{Imago Mundi} 69(1), 1 to 36.
+\bibitem[Dilke(1987a)]{dilke1987a} Dilke, O. A. W. (1987a) The culmination of Greek cartography in Ptolemy. In Harley, J. B. and Woodward, D. (eds) \textit{The History of Cartography, Volume One}. Chicago: University of Chicago Press, 177 to 200.
+\bibitem[Dilke(1987b)]{dilke1987b} Dilke, O. A. W. (1987b) Itineraries and geographical maps in the early and late Roman empires. In Harley, J. B. and Woodward, D. (eds) \textit{The History of Cartography, Volume One}. Chicago: University of Chicago Press, 234 to 257.
+\bibitem[Edney(2019)]{edney2019} Edney, M. H. (2019) \textit{Cartography: The Ideal and Its History}. Chicago: University of Chicago Press.
+\bibitem[Efron and Tibshirani(1993)]{efron1993} Efron, B. and Tibshirani, R. J. (1993) \textit{An Introduction to the Bootstrap}. Monographs on Statistics and Applied Probability 57. New York: Chapman and Hall.
+\bibitem[Evans and Lawrence(1979)]{evans1979} Evans, I. M. and Lawrence, H. (1979) \textit{Christopher Saxton, Elizabethan Map-Maker}. Wakefield: Wakefield Historical Publications and Holland Press.
+\bibitem[Forstner and Oehrli(1998)]{forstner1998} Forstner, G. and Oehrli, M. (1998) Graphische Darstellungen der Untersuchungsergebnisse alter Karten und die Entwicklung der Verzerrungsgitter. \textit{Cartographica Helvetica} 17, 35 to 43.
+\bibitem[Grasshoff and Defaux(2019)]{grasshoff2019} Grasshoff, G. and Defaux, O. (2019) Catalog of Ptolemy's Geography, main books. Zenodo. doi:10.5281/zenodo.3585758. CC BY 4.0.
+\bibitem[Hardy(1971)]{hardy1971} Hardy, R. L. (1971) Multiquadric equations of topography and other irregular surfaces. \textit{Journal of Geophysical Research} 76(8), 1905 to 1915.
+\bibitem[Harley and Woodward(1987)]{harley1987} Harley, J. B. and Woodward, D. (eds) (1987) \textit{The History of Cartography, Volume One: Cartography in Prehistoric, Ancient, and Medieval Europe and the Mediterranean}. Chicago: University of Chicago Press.
+\bibitem[Harvey(1996)]{harvey1996} Harvey, P. D. A. (1996) \textit{Mappa Mundi: The Hereford World Map}. Toronto: University of Toronto Press; London: British Library.
+\bibitem[Hotham(2026a)]{hotham2026ptolemy} Hotham, T. (2026a) Ptolemy's world, measured: the coordinates of the Geography set against a modern map. Preprint, Zenodo. doi:10.5281/zenodo.23882603.
+\bibitem[Hotham(2026b)]{hotham2026peutinger} Hotham, T. (2026b) The Peutinger Table against a modern map: shape, space and distance on a Roman road map. Preprint, Zenodo. doi:10.5281/zenodo.23882605.
+\bibitem[Hotham(2026c)]{hotham2026idrisi} Hotham, T. (2026c) Al-Idrisi's world: the map made for Roger II of Sicily in 1154, set against a modern map. Preprint, Zenodo. doi:10.5281/zenodo.23882607.
+\bibitem[Hotham(2026d)]{hotham2026hereford} Hotham, T. (2026d) The world according to the Hereford Mappa Mundi: a medieval map of the world set against a modern one. Preprint, Zenodo. doi:10.5281/zenodo.23878612.
+\bibitem[Hotham(2026e)]{hotham2026portolan} Hotham, T. (2026e) How accurate were portolan charts? The Carta Pisana and the Catalan Atlas measured against the real coast. Preprint, Zenodo. doi:10.5281/zenodo.24044645.
+\bibitem[Hotham(2026f)]{hotham2026gough} Hotham, T. (2026f) The Gough Map: Britain's oldest road map, measured. Preprint, Zenodo. doi:10.5281/zenodo.24043678.
+\bibitem[Hotham(2026g)]{hotham2026saxton} Hotham, T. (2026g) Saxton's atlas, measured: the accuracy, scale and orientation of the first county atlas of England and Wales (1574 to 1579). Preprint, Zenodo. doi:10.5281/zenodo.24052723.
+\bibitem[Hotham(2026h)]{hotham2026ino} Hotham, T. (2026h) How close did Ino get? Measuring sheets of Ino Tadataka's large-scale map of Japan (1821) against the modern coastline. Preprint, Zenodo. doi:10.5281/zenodo.23882609.
+\bibitem[Huber(1964)]{huber1964} Huber, P. J. (1964) Robust estimation of a location parameter. \textit{Annals of Mathematical Statistics} 35(1), 73 to 101.
+\bibitem[Jenny and Hurni(2011)]{jenny2011} Jenny, B. and Hurni, L. (2011) Studying cartographic heritage: analysis and visualization of geometric distortions. \textit{Computers and Graphics} 35(2), 402 to 411. doi:10.1016/j.cag.2011.01.005.
+\bibitem[Jenny et al.(2007)]{jenny2007} Jenny, B., Weber, A. and Hurni, L. (2007) Visualizing the planimetric accuracy of historical maps with MapAnalyst. \textit{Cartographica} 42(1), 89 to 94. doi:10.3138/carto-v42-1-089.
+\bibitem[Lilley et al.(2009)]{lilley2009} Lilley, K. D., Lloyd, C. D. and Campbell, B. M. S. (2009) Mapping the realm: a new look at the Gough Map of Britain (c. 1360). \textit{Imago Mundi} 61(1), 1 to 28.
+\bibitem[Livieratos(2006a)]{livieratos2006} Livieratos, E. (2006a) On the study of the geometric properties of historical cartographic representations. \textit{Cartographica} 41(2), 165 to 175.
+\bibitem[Livieratos(2006b)]{livieratos2006graticule} Livieratos, E. (2006b) Graticule versus point positioning in Ptolemy cartographies. \textit{e-Perimetron} 1(1), 51 to 59.
+\bibitem[Lloyd and Lilley(2009)]{lloyd2009} Lloyd, C. D. and Lilley, K. D. (2009) Cartographic veracity in medieval mapping: analyzing geographical variation in the Gough Map of Great Britain. \textit{Annals of the Association of American Geographers} 99(1), 27 to 48. doi:10.1080/00045600802224638.
+\bibitem[Moran(1950)]{moran1950} Moran, P. A. P. (1950) Notes on continuous stochastic phenomena. \textit{Biometrika} 37(1/2), 17 to 23. doi:10.1093/biomet/37.1-2.17.
+\bibitem[Nicolai(2016)]{nicolai2016} Nicolai, R. (2016) \textit{The Enigma of the Origin of Portolan Charts: A Geodetic Analysis of the Hypothesis of a Medieval Origin}. History of Science and Medicine Library 52. Leiden: Brill.
+\bibitem[Parsons(1958)]{parsons1958} Parsons, E. J. S. (1958) \textit{The Map of Great Britain circa A.D. 1360 known as the Gough Map: An Introduction to the Facsimile}, with ``The roads of the Gough Map'' by Sir Frank Stenton. Oxford: Bodleian Library and Royal Geographical Society.
+\bibitem[Smallwood(2010)]{smallwood2010} Smallwood, T. M. (2010) The date of the Gough Map. \textit{Imago Mundi} 62(1), 3 to 29.
+\bibitem[Solopova(2012)]{solopova2012} Solopova, E. (2012) The making and re-making of the Gough Map of Britain: manuscript evidence and historical context. \textit{Imago Mundi} 64(2), 155 to 168.
+\bibitem[St\"uckelberger and Grasshoff(2006)]{stuckelberger2006} St\"uckelberger, A. and Grasshoff, G. (eds) (2006) \textit{Klaudios Ptolemaios, Handbuch der Geographie: Griechisch-Deutsch}. 2 vols. Basel: Schwabe.
+\bibitem[Talbert(2010)]{talbert2010} Talbert, R. J. A. (2010) \textit{Rome's World: The Peutinger Map Reconsidered}. Cambridge: Cambridge University Press.
+\bibitem[Tobler(1966)]{tobler1966} Tobler, W. R. (1966) Medieval distortions: the projections of ancient maps. \textit{Annals of the Association of American Geographers} 56(2), 351 to 360. doi:10.1111/j.1467-8306.1966.tb00562.x.
+\bibitem[Tobler(1994)]{tobler1994} Tobler, W. R. (1994) Bidimensional regression. \textit{Geographical Analysis} 26(3), 187 to 212.
+\bibitem[Unno(1994)]{unno1994} Unno, K. (1994) Cartography in Japan. In Harley, J. B. and Woodward, D. (eds) \textit{The History of Cartography, Volume Two, Book Two: Cartography in the Traditional East and Southeast Asian Societies}. Chicago: University of Chicago Press, 346 to 477.
+\bibitem[Webb(2023)]{webb2023} Webb, M. D. (2023) Reworking wild bootstrap-based inference for clustered errors. \textit{Canadian Journal of Economics} 56(3), 839 to 858.
+\bibitem[Westrem(2001)]{westrem2001} Westrem, S. D. (2001) \textit{The Hereford Map: A Transcription and Translation of the Legends with Commentary}. Terrarum Orbis 1. Turnhout: Brepols.
+\bibitem[Woodward(1985)]{woodward1985} Woodward, D. (1985) Reality, symbolism, time, and space in medieval world maps. \textit{Annals of the Association of American Geographers} 75(4), 510 to 521. doi:10.1111/j.1467-8306.1985.tb00090.x.
+\bibitem[Woodward(1987)]{woodward1987} Woodward, D. (1987) Medieval mappaemundi. In Harley, J. B. and Woodward, D. (eds) \textit{The History of Cartography, Volume One}. Chicago: University of Chicago Press, 286 to 370.
+\end{thebibliography}
+
+\appendix
+\section{Appendix: further tables and settings}
+\begin{table}[tbp]\centering\small\caption{Error and distance from home (H4). Spearman rank correlation between error and distance from the pre-set home, with 95\% bootstrap interval; median error (km) of the nearest and farthest thirds of points. Pooled: OLS of $\log(\text{error}/R)$ on distance$/R$ with map fixed effects, standard errors clustered by map.}\label{tab:home}\begin{tabular}{llllr}\toprule Map & Home & $\rho$ [95\% CI] & Near third & Far third\\\midrule
+Ptolemy & Alexandria & 0.11 [0.07, 0.16] & 245 & 272\\
+Peutinger & Rome & 0.32 [0.22, 0.40] & 274 & 394\\
+al-Idrisi & Palermo & 0.23 [0.13, 0.34] & 345 & 406\\
+Carta Pisana & Genoa & $-$0.11 [$-$0.26, 0.05] & 98 & 84\\
+Hereford & Jerusalem & $-$0.32 [$-$0.48, $-$0.14] & 906 & 403\\
+Gough & London & 0.32 [0.16, 0.46] & 12 & 22\\
+Saxton & London & $-$0.27 [$-$0.55, 0.04] & 5 & 4\\
+Ino & Tokyo & 0.31 [$-$0.17, 0.70] & 7 & 11\\
+Catalan Atlas & Palma & 0.44 [0.31, 0.55] & 93 & 168\\
+\midrule Pooled (map FE) & & $b$ = 0.297 (SE 0.041) & \multicolumn{2}{l}{wild bootstrap $p$ = 0.048}\\
+\quad leave one map out & & $b$ from 0.257 to 0.323 & \multicolumn{2}{l}{$n$ = 3,973 points, 9 maps}\\
+\bottomrule\end{tabular}\end{table}
+
+\begin{table}[tbp]\centering\scriptsize\caption{Leave one region out (R6): the lowest and highest relative error when each region (or quadrant, for Saxton and Ino) is left out in turn.}\label{tab:loro}\begin{tabular}{lrrp{4.6cm}p{4.6cm}}\toprule Map & Regions & Main \% & Lowest \% & Highest \%\\\midrule
+Ptolemy & 3 & 12.9 & 11.4 (without Europe) & 13.0 (without Africa)\\
+Peutinger & 11 & 26.0 & 25.3 (without Egypt and Cyrene) & 29.3 (without Gaul and the Rhine)\\
+al-Idrisi & 17 & 15.7 & 15.2 (without Sind and India) & 18.5 (without Iberia)\\
+Carta Pisana & 4 & 8.0 & 6.0 (without Atlantic coasts) & 12.1 (without Eastern Mediterranean)\\
+Hereford & 14 & 23.4 & 21.7 (without Syria and Anatolia) & 30.3 (without British Isles)\\
+Gough & 7 & 10.0 & 8.6 (without Scotland) & 12.0 (without South-east)\\
+Saxton & 4 & 3.5 & 3.1 (without EN) & 4.2 (without WN)\\
+Ino & 3 & 1.7 & 1.5 (without ES) & 2.4 (without EN)\\
+Catalan Atlas & 4 & 8.6 & 5.7 (without Atlantic coasts) & 11.0 (without Western Mediterranean)\\
+\bottomrule\end{tabular}\end{table}
+
+\begin{table}[tbp]\centering\small\caption{Consistency with the source studies (F2): each source study's own median error (km) and the comparable figure from the common method (same model where possible: affine for al-Idrisi, leave-one-out for the Ino sheets).}\label{tab:src}\begin{tabular}{llrr}\toprule Map & Source study's method & Source km & Here km\\\midrule
+Ptolemy & Helmert on his degree grid & 144 & 219\\
+Peutinger & no planar median reported & & \\
+al-Idrisi & affine & 239 & 281\\
+Carta Pisana & Mercator similarity & 93 & 94\\
+Hereford & similarity from Jerusalem & 516 & 526\\
+Gough & similarity & 18 & 18\\
+Saxton & similarity & 4.23 & 4.40\\
+Ino & similarity & 7.90 & 8.31\\
+Catalan Atlas & Mercator similarity & 88 & 117\\
+Saxton sheets & similarity per sheet & 1.37 & 1.39\\
+Ino sheets & similarity per sheet, leave one out & 0.51 & 0.55\\
+\bottomrule\end{tabular}\end{table}
+
+\textbf{Settings.} Ground plane: azimuthal equidistant on a sphere of radius 6,371.0088 km, centred on the spherical centroid of each frame's points. Bootstrap: 2,000 draws, percentile intervals, seed 20261. Neighbourhood error: $k = 8$ ($k = \min(8, n-1)$ for small sheets). Moran's I: eight nearest neighbours, row-standardised, 999 permutations. Wild cluster bootstrap: Webb six-point weights, 9,999 draws, null imposed. Distortion grids: scipy \texttt{RBFInterpolator} with kernel \texttt{multiquadric}, degree 1, $\varepsilon = 1/$median nearest-neighbour distance (in units of $R$), smoothing $10^{-3} n$; grid spacing $R/4$; hull buffer $0.15R$. Catalan Atlas: sheets 7 and 8 shifted by the source study's join offset (603.5 pixels west). Ino sheets: sheets with at least four control points. No control point was dropped or changed for any reason related to the outcome.
+
+\textbf{Software.} Python 3 with numpy, pandas, scipy, pyproj, shapely and matplotlib; xelatex. All code is in the repository and the data and code archive.
+
+\end{document}
