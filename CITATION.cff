@@ -1,0 +1,23 @@
+cff-version: 1.2.0
+message: "If you use this data or code, please cite it as below."
+title: "How Accurate Were Old Maps? Eight Maps Across 1,700 Years, Measured One Way"
+type: dataset
+authors:
+  - family-names: Hotham
+    given-names: Tristan
+    orcid: "https://orcid.org/0000-0003-4931-9349"
+    affiliation: "Independent researcher"
+doi: "10.5281/zenodo.24104514"
+url: "https://maps.tristanhotham.com/map-accuracy/"
+repository-code: "https://github.com/Tristan-Hotham/map-accuracy"
+license: CC-BY-4.0
+keywords:
+  - "history of cartography"
+  - "cartometric analysis"
+  - "map accuracy"
+  - "distortion grids"
+  - "Helmert transformation"
+  - "MapAnalyst"
+  - "Ptolemy"
+  - "portolan charts"
+  - "mappae mundi"
